@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" /> -->
+    <link rel="stylesheet" href="/static/css/main.css">
+    <title>ClipSwap</title>
+    <link rel="icon" href="static\images\logo.png">
+    <!-- Google Fonts Link For Icons -->
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@48,400,1,0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap"
+        rel="stylesheet">
+</head>
+<style>
+    .open-sans-heading {
+        font-family: "Open Sans", sans-serif;
+        font-optical-sizing: auto;
+        font-weight: 550;
+        font-style: normal;
+        font-variation-settings:
+            "wdth" 100;
+    }
+
+    ::-webkit-scrollbar {
+        height: 0px;
+        width: 5px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background-color: gray;
+        border-radius: 5px;
+    }
+
+    @keyframes slide-up {
+        from {
+            transform: translateY(30px);
+        }
+
+        to {
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes type-in {
+        from {
+            width: 0%
+        }
+
+        to {
+            width: 100%
+        }
+    }
+
+    @keyframes fade-in {
+        from {
+            opacity: 0
+        }
+
+        to {
+            opacity: 100%
+        }
+    }
+
+    .animation-type-in {
+        /* animation: name duration timing-function delay iteration-count direction fill-mode; */
+        animation: type-in 1s ease-in-out 1;
+
+    }
+
+    .animation-up-10 {
+        animation-name: slide-up, fade-in;
+        animation-duration: 1s;
+
+    }
+
+    .animation-up-15-fade {
+        animation-name: slide-up, fade-in;
+        animation-duration: 1.5s;
+
+    }
+
+    .animation-up-15 {
+        animation-name: slide-up;
+        animation-duration: 1.5s;
+
+    }
+
+    .animation-fade-in {
+        animation-name: fade-in;
+        animation-duration: 1s;
+        animation-iteration-count: 1;
+    }
+
+    /* Import Google font - Poppins */
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+    }
+
+    body {
+        background: #E3F2FD;
+    }
+
+    .chatbot-toggler {
+        position: fixed;
+        bottom: 30px;
+        right: 35px;
+        outline: none;
+        border: none;
+        height: 50px;
+        width: 50px;
+        display: flex;
+        cursor: pointer;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: #724ae8;
+        transition: all 0.2s ease;
+    }
+
+    body.show-chatbot .chatbot-toggler {
+        transform: rotate(90deg);
+    }
+
+    .chatbot-toggler span {
+        color: #fff;
+        position: absolute;
+    }
+
+    .chatbot-toggler span:last-child,
+    body.show-chatbot .chatbot-toggler span:first-child {
+        opacity: 0;
+    }
+
+    body.show-chatbot .chatbot-toggler span:last-child {
+        opacity: 1;
+    }
+
+    .chatbot {
+        position: fixed;
+        right: 35px;
+        bottom: 90px;
+        width: 420px;
+        background: #fff;
+        border-radius: 15px;
+        overflow: hidden;
+        opacity: 0;
+        pointer-events: none;
+        transform: scale(0.5);
+        transform-origin: bottom right;
+        box-shadow: 0 0 128px 0 rgba(0, 0, 0, 0.1),
+            0 32px 64px -48px rgba(0, 0, 0, 0.5);
+        transition: all 0.1s ease;
+    }
+
+    body.show-chatbot .chatbot {
+        opacity: 1;
+        pointer-events: auto;
+        transform: scale(1);
+    }
+
+    .chatbot header {
+        padding: 16px 0;
+        position: relative;
+        text-align: center;
+        color: #fff;
+        background: #724ae8;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .chatbot header span {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        display: none;
+        cursor: pointer;
+        transform: translateY(-50%);
+    }
+
+    header h2 {
+        font-size: 1.4rem;
+    }
+
+    .chatbot .chatbox {
+        overflow-y: auto;
+        height: 510px;
+        padding: 30px 20px 100px;
+    }
+
+    .chatbot :where(.chatbox, textarea)::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .chatbot :where(.chatbox, textarea)::-webkit-scrollbar-track {
+        background: #fff;
+        border-radius: 25px;
+    }
+
+    .chatbot :where(.chatbox, textarea)::-webkit-scrollbar-thumb {
+        background: #ccc;
+        border-radius: 25px;
+    }
+
+    .chatbox .chat {
+        display: flex;
+        list-style: none;
+    }
+
+    .chatbox .outgoing {
+        margin: 20px 0;
+        justify-content: flex-end;
+    }
+
+    .chatbox .incoming span {
+        width: 32px;
+        height: 32px;
+        color: #fff;
+        cursor: default;
+        text-align: center;
+        line-height: 32px;
+        align-self: flex-end;
+        background: #724ae8;
+        border-radius: 4px;
+        margin: 0 10px 7px 0;
+    }
+
+    .chatbox .chat p {
+        white-space: pre-wrap;
+        padding: 12px 16px;
+        border-radius: 10px 10px 0 10px;
+        max-width: 75%;
+        color: #fff;
+        font-size: 0.95rem;
+        background: #724ae8;
+    }
+
+    .chatbox .incoming p {
+        border-radius: 10px 10px 10px 0;
+    }
+
+    .chatbox .chat p.error {
+        color: #721c24;
+        background: #f8d7da;
+    }
+
+    .chatbox .incoming p {
+        color: #000;
+        background: #f2f2f2;
+    }
+
+    .chatbot .chat-input {
+        display: flex;
+        gap: 5px;
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        background: #fff;
+        padding: 3px 20px;
+        border-top: 1px solid #ddd;
+    }
+
+    .chat-input textarea {
+        height: 55px;
+        width: 100%;
+        border: none;
+        outline: none;
+        resize: none;
+        max-height: 180px;
+        padding: 15px 15px 15px 0;
+        font-size: 0.95rem;
+    }
+
+    .chat-input span {
+        align-self: flex-end;
+        color: #724ae8;
+        cursor: pointer;
+        height: 55px;
+        display: flex;
+        align-items: center;
+        visibility: hidden;
+        font-size: 1.35rem;
+    }
+
+    .chat-input textarea:valid~span {
+        visibility: visible;
+    }
+
+    @media (max-width: 490px) {
+        .chatbot-toggler {
+            right: 20px;
+            bottom: 20px;
+        }
+
+        .chatbot {
+            right: 0;
+            bottom: 0;
+            height: 100%;
+            border-radius: 0;
+            width: 100%;
+        }
+
+        .chatbot .chatbox {
+            height: 90%;
+            padding: 25px 15px 100px;
+        }
+
+        .chatbot .chat-input {
+            padding: 5px 15px;
+        }
+
+        .chatbot header span {
+            display: block;
+        }
+    }
+
+    .waves {
+        position: relative;
+        width: 100%;
+        height: 15vh;
+        /* margin-bottom: -7px; */
+        /*Fix for safari gap*/
+        min-height: 100px;
+        max-height: 150px;
+    }
+
+    .content {
+        position: relative;
+        height: 20vh;
+        text-align: center;
+        background-color: rgb(19, 83, 212);
+    }
+
+    /* Animation */
+
+    .parallax>use {
+        animation: move-forever 25s cubic-bezier(0.55, 0.5, 0.45, 0.5) infinite;
+    }
+
+    .parallax>use:nth-child(1) {
+        animation-delay: -2s;
+        animation-duration: 7s;
+    }
+
+    .parallax>use:nth-child(2) {
+        animation-delay: -3s;
+        animation-duration: 10s;
+    }
+
+    .parallax>use:nth-child(3) {
+        animation-delay: -4s;
+        animation-duration: 13s;
+    }
+
+    .parallax>use:nth-child(4) {
+        animation-delay: -5s;
+        animation-duration: 20s;
+    }
+
+    @keyframes move-forever {
+        0% {
+            transform: translate3d(-90px, 0, 0);
+        }
+
+        100% {
+            transform: translate3d(85px, 0, 0);
+        }
+    }
+
+    /* /* Shrinking for mobile */
+    @media (max-width: 768px) {
+        .waves {
+            height: 40px;
+            min-height: 40px;
+        }
+
+        .content {
+            height: 30vh;
+        }
+
+        h1 {
+            font-size: 24px;
+        }
+    }
+
+    .scrolly {
+        opacity: 0;
+        filter: blur(5px);
+        transform: translateX(-100%);
+        transition: all 1s;
+    }
+
+    .show {
+        opacity: 1;
+        filter: blur(0);
+        transform: translateX(0);
+    }
+</style>
+
+<body class="bg-[#101825] ">
+    <div id="preRegisterForm" style="transition: visibility 0.2s, opacity 0.2s linear; visibility: hidden; opacity: 0;" class="bg-black h-screen w-screen absolute top-0 left-0 z-50 bg-opacity-50 flex justify-center items-center">
+        <div class="rounded-[30px] p-[5vh] bg-[#1E293B] text-white">
+            <div class="text-4xl open-sans-heading">Pre-Register NOW!</div>
+            <span
+            class="open-sans-heading capitalize text-sm md:block mt-[2vh] text-gray-300 ">
+            Be the first to know! Pre-register your email<br>for exclusive ClipSwap AI launch news.
+        </span>
+            <Form class="flex flex-col">
+                <div class="relative w-full min-w-[200px] h-10 my-[2vh]">
+                    <input name="email" type="email"
+                        class="peer w-full h-full bg-transparent text-white font-sans font-normal outline outline-0 focus:outline-0 disabled:bg-blue-gray-50 disabled:border-0 transition-all placeholder-shown:border-2 placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 border focus:border-2 border-t-transparent focus:border-t-transparent text-sm px-3 py-2.5 rounded-[7px] border-blue-gray-200 focus:border-purple-500"
+                        placeholder=" " /><label
+                        class="open-sans-heading flex w-full h-full select-none pointer-events-none absolute left-0 font-normal !overflow-visible truncate peer-placeholder-shown:text-white leading-tight peer-focus:leading-tight peer-disabled:text-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500 transition-all -top-1.5 peer-placeholder-shown:text-sm text-[11px] peer-focus:text-[11px] before:content[' '] before:block before:box-border before:w-2.5 before:h-1.5 before:mt-[6.5px] before:mr-1 peer-placeholder-shown:before:border-transparent before:rounded-tl-md before:border-t peer-focus:before:border-t-2 before:border-l peer-focus:before:border-l-2 before:pointer-events-none before:transition-all peer-disabled:before:border-transparent after:content[' '] after:block after:flex-grow after:box-border after:w-2.5 after:h-1.5 after:mt-[6.5px] after:ml-1 peer-placeholder-shown:after:border-transparent after:rounded-tr-md after:border-t peer-focus:after:border-t-2 after:border-r peer-focus:after:border-r-2 after:pointer-events-none after:transition-all peer-disabled:after:border-transparent peer-placeholder-shown:leading-[3.75] text-blue-gray-400 peer-focus:text-purple-500 before:border-blue-gray-200 peer-focus:before:!border-purple-500 after:border-blue-gray-200 peer-focus:after:!border-purple-500">
+                        Email
+                    </label>
+                </div>
+                <button
+                    class="text-purple-700 open-sans-heading transition-all font-bold duration-300 ease-in-out py-2 rounded-lg border-2 border-purple-700 flex flex-grow justify-center items-center hover:bg-purple-700 hover:text-white active:bg-purple-800">
+                    Submit
+                </button>
+            </Form>
+        </div>
+    </div>
+    <div class="bg-[#101825] h-[70vh] md:h-[89vh] ">
+        <header class="text-gray-600 body-font">
+            <div class="container mx-auto flex flex-wrap px-2 py-7 flex-row items-center">
+                <a class="flex cursor-pointer title-font font-medium justify-center items-center text-gray-900 mb-0"
+                    href="">
+                    <!-- <img src="static\images\logo.png" alt="" class="w-8 h-8 text-white bg-transparent rounded-full"> -->
+                    <span class="text-xl text-white font-bold w-40">
+                        <img src="{{ url_for('static', filename='images/Official Logo Clip Swap.png') }}" alt="">
+                    </span>
+                </a>
+                <nav class="open-sans-heading flex justify-around  text-base text-white flex-grow ml-[30vh] mr-[20vh]">
+                    <a href="">Docs</a>
+                    <a href="">Workspaces</a>
+                    <a href="">Gallery</a>
+                    <a href="">Templates</a>
+                    <a href="">About</a>
+                    <!-- <a class="mr-5 text-white  ease-in-out transition-all px-5 rounded-md hover:bg-indigo-500 cursor-pointer">First Link</a> -->
+                    <!-- <a class="mr-5 text-white  ease-in-out transition-all px-5 rounded-md hover:bg-indigo-500 cursor-pointer">Second Link</a>
+        <a class="mr-5 text-white  ease-in-out transition-all px-5 rounded-md hover:bg-indigo-500 cursor-pointer">Third Link</a>
+        <a class="mr-5 text-white  ease-in-out transition-all px-5 rounded-md hover:bg-indigo-500 cursor-pointer">Fourth Link</a> -->
+                </nav>
+                <a href="/register">
+                    <button
+                        class="text-white hidden md:block transition-all font-bold duration-300 ease-in-out bg-[#1E293B] px-10 py-2 rounded-lg">Register</button></a>
+                <button
+                    class="text-purple-700 hidden md:block transition-all font-bold duration-300 ease-in-out px-[38px] py-[6px] rounded-lg ml-[2vh] border-2 border-purple-700 hover:bg-purple-700 hover:text-white transition-all ease-in-out active:bg-purple-800"><a
+                        href="">Try For Free</a></button>
+            </div>
+        </header>
+        <section
+            class="text-gray-600 px-5 md:px-20 body-font   lg:flex lg:justify-center lg:items-center pt-[7vh] md:mt-0">
+            <div class="">
+                <div class="flex justify-center animation-up-10 ease-in-out">
+                    <!-- <span class="font-bold text-white text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl lg:text-center spacing gradient-text animate-gradient"></span> -->
+                    <span
+                        class="open-sans-heading text-white text-3xl sm:text-4xl md:text-6xl lg:text-7xl xl:text-8xl text-center spacing gradient-text animate-gradient ">10x
+                        your sales with,</span>
+                </div>
+                <div class="flex justify-center ">
+                    <div class="relative ">
+                        <div class="animation-fade-in ">
+                            <span
+                                class="font-semibold bg-clip-text   text-transparent text-3xl sm:text-4xl md:text-6xl lg:text-7xl xl:text-8xl text-center spacing gradient-text animate-gradient ">
+                                ClipSwap</span>
+                        </div>
+                        <!-- <span
+            class="font-black space-x-2 relative text-black bg-clip-text  text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl text-center spacing ">InstaMiner</span> -->
+                    </div>
+                    <!-- <img src="/static/images/main.jpg" alt="" class="max-w-sm"> -->
+                </div>
+                <div class="flex justify-center py-10">
+                    <span
+                        class="open-sans-heading capitalize max-w-screen-md lg:text-center hidden md:block  text-gray-300 animation-up-15-fade">
+                        Struggling to capitalize on viral trends without compromising your brand identity? ClipSwap Ai
+                        streamlines the process, allowing you to effortlessly rebrand viral reels to perfectly match
+                        your brand aesthetic.
+                    </span>
+                    <span
+                        class="max-w-screen-md text-center text-xs  md:hidden font-semibold text-white animation-up-15-fade">AI
+                        technology
+                        to grow your wealth and community you always dreamed of.</span>
+                </div>
+                <div class="flex justify-center ">
+                    <div class="relative group">
+                        <div
+                            class="blur animation-type-in absolute text-xl group-hover:opacity-100 transition duration-1000 group-hover:duration-200  -inset-0.5 opacity-75 bg-gradient-to-r from-[#8400ff] via-[#ff0000] to-[#0026ff] rounded-full">
+                        </div>
+                        <button id="getStartedBtn"
+                            class="relative group-hover:animate-gradient lg:text-xl bg-[#101825] text-white font-bold transition-all duration-300 ease-in-out px-10 py-2 rounded-full">
+                            Get Started
+                        </button>
+                    </div>
+                </div>
+                <div class="flex justify-center items-center py-5">
+                    <div class="mr-[3vh] flex">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="purple" class="size-6 mr-2">
+                            <path fill-rule="evenodd"
+                                d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        <span class="open-sans-heading text-gray-300">Very Easy To Use</span>
+                    </div>
+                    <div class="flex">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="purple" class="size-6 mr-2">
+                            <path d="M12 7.5a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5Z" />
+                            <path fill-rule="evenodd"
+                                d="M1.5 4.875C1.5 3.839 2.34 3 3.375 3h17.25c1.035 0 1.875.84 1.875 1.875v9.75c0 1.036-.84 1.875-1.875 1.875H3.375A1.875 1.875 0 0 1 1.5 14.625v-9.75ZM8.25 9.75a3.75 3.75 0 1 1 7.5 0 3.75 3.75 0 0 1-7.5 0ZM18.75 9a.75.75 0 0 0-.75.75v.008c0 .414.336.75.75.75h.008a.75.75 0 0 0 .75-.75V9.75a.75.75 0 0 0-.75-.75h-.008ZM4.5 9.75A.75.75 0 0 1 5.25 9h.008a.75.75 0 0 1 .75.75v.008a.75.75 0 0 1-.75.75H5.25a.75.75 0 0 1-.75-.75V9.75Z"
+                                clip-rule="evenodd" />
+                            <path
+                                d="M2.25 18a.75.75 0 0 0 0 1.5c5.4 0 10.63.722 15.6 2.075 1.19.324 2.4-.558 2.4-1.82V18.75a.75.75 0 0 0-.75-.75H2.25Z" />
+                        </svg>
+                        <span class="topen-sans-heading text-gray-300">Reasonable Prices</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <!-- <div class="h-32 bg-gradient-to-b from-black via-blue-600 to-gray-200"></div> -->
+    <div class="">
+        <svg class="waves " xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+            style="z-index: -1;" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
+            <defs>
+                <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
+            </defs>
+            <g class="parallax animation-up-15 ">
+                <use xlink:href="#gentle-wave" x="48" y="0" fill="rgba(123, 131, 255,0.7)" />
+                <use xlink:href="#gentle-wave" x="48" y="3" fill="rgba(181, 113, 255,0.5)" />
+                <use xlink:href="#gentle-wave" x="48" y="5" fill="rgba(123, 131, 255,0.3)" />
+                <use xlink:href="#gentle-wave" x="48" y="7" fill="#1E293B" />
+            </g>
+        </svg>
+    </div>
+    <section class="bg-[#1E293B]   pt-20 flex justify-center items-center flex-col ">
+        <section
+            class="bg-[#101825] w-[90%] rounded-[50px] transition duration-200 shadow-2xl scrolly flex flex-col justify-center items-center p-[10vh] mb-[10vh]">
+            <div class="open-sans-heading text-white text-4xl text-center font-black capitalize"
+                style="font-weight: 700;">Rebrand Viral Videos within seconds<br>With Our <span
+                    class="text-transparent gradient-text animate-gradient">Ai technology</span></div>
+            <div class="open-sans-heading capitalize text-gray-300 mt-[2vh] text-center max-w-[70%]">Re-Brand viral
+                videos within seconds - With our Ai Perform actions like Removing Captions, adding Subtitles, Rearrange
+                Clips, Replace Music, Replace Voice Over and more within Seconds.</div>
+            <!-- <img src="{{ url_for('static', filename='images/editor.jpeg') }}" alt="" class="mt-[5vh]"> -->
+        </section>
+        <section
+            class="bg-[#101825] w-[90%] rounded-[50px] transition duration-200 shadow-2xl scrolly flex flex-col justify-center items-center p-[10vh] mb-[10vh]">
+            <div class="open-sans-heading text-white text-4xl text-center font-black capitalize"
+                style="font-weight: 700;">Create Viral Content in Bulk<br>With Our <span
+                    class="text-transparent gradient-text animate-gradient">Bulk Editor</span></div>
+            <div class="open-sans-heading capitalize text-gray-300 mt-[2vh]">Re-Branding one video is easy - But With
+                our Bulk Editor you can Re-Brand 100+ withing minutes</div>
+        </section>
+        <section
+            class="bg-[#101825] w-[90%] rounded-[50px] transition duration-200 shadow-2xl scrolly flex flex-col justify-center items-center p-[10vh] mb-[10vh]">
+            <div class="open-sans-heading text-white text-4xl text-center font-black capitalize"
+                style="font-weight: 700;">Create Your own Viral content<br>With Our <span
+                    class="text-transparent gradient-text animate-gradient">Pre-made Templates</span></div>
+            <div class="open-sans-heading capitalize text-gray-300 mt-[2vh] text-center">Get your products in front of more eyes with Reels that pop. Our pre-made templates help you create engaging product stories that convert viewers into paying customers.</div>
+        </section>
+        <div class="w-full ">
+            <svg class="waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
+                <defs>
+                    <path id="gentle-wave"
+                        d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
+                </defs>
+                <g class="parallax">
+                    <use xlink:href="#gentle-wave" x="48" y="0" fill="rgba(123, 131, 255,0.7)" />
+                    <use xlink:href="#gentle-wave" x="48" y="3" fill="rgba(181, 113, 255,0.5)" />
+                    <use xlink:href="#gentle-wave" x="48" y="5" fill="rgba(123, 131, 255,0.3)" />
+                    <use xlink:href="#gentle-wave" x="48" y="7" fill="#000" />
+                </g>
+            </svg>
+        </div>
+        <!-- <section class="bg-black w-[100%] ">
+            <div class="flex justify-center mt-[7%]">
+
+                <div class="flex flex-col md:flex-row  max-w-[90%]">
+                    <div>
+                        <div class="relative group scrolly " id="benefitsContainer">
+                            <div
+                                class="blur animation-type-in absolute text-xl group-hover:opacity-100 transition duration-1000 group-hover:duration-200  -inset-0.5 opacity-75 bg-gradient-to-r from-[#8400ff] via-[#ff0000] to-[#0026ff] rounded-2xl">
+                            </div>
+                            <div
+                                class="relative group-hover:animate-gradient bg-black text-white  transition-all duration-300 ease-in-out px-10 py-10 rounded-2xl">
+                                <span class="text-xl md:text-7xl font-bold ">Benefits</span>
+                                <ul class="text-base md:text-3xl md:mx-5 font-semibold">
+                                    <li class="pt-10 md:pt-16">Save time by generating <span
+                                            class="text-transparent gradient-text animate-gradient">Viral reels in
+                                            seconds.</span></li>
+                                    <li class="pt-8 md:pt-14">Our <span
+                                            class="text-transparent gradient-text animate-gradient">AI
+                                            technology
+                                            do
+                                            all the work</span> itself from writing script to uploading the reel
+                                        with
+                                        caption and
+                                        hashtags.
+                                    </li>
+                                    <li class="pt-8 pb-4 md:pt-14 md:pb-8">This AI tool is based on the algorithm of
+                                        Instagram to<span class="text-transparent gradient-text animate-gradient">
+                                            Grow
+                                            channels faster.</span></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex flex-col md:pl-10">
+                        <div id="gradientsContainer"
+                            class="h-32 w-full  md:h-52 mt-5 md:mt-0 mb-5 md:w-52 bg-gradient-to-tr from-[rgb(1,17,255)] via-[#800Bff] to-[#FF010B] scrolly  rounded-2xl flex justify-center items-center">
+                            <div class="md:pb-10 flex justify-center items-center md:block">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="1.5" stroke="white" class="h-12 w-12 md:w-16 md:h-16 mr-5 md:mr-0">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M15.362 5.214A8.252 8.252 0 0 1 12 21 8.25 8.25 0 0 1 6.038 7.047 8.287 8.287 0 0 0 9 9.601a8.983 8.983 0 0 1 3.361-6.867 8.21 8.21 0 0 0 3 2.48Z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M12 18a3.75 3.75 0 0 0 .495-7.468 5.99 5.99 0 0 0-1.925 3.547 5.975 5.975 0 0 1-2.133-1.001A3.75 3.75 0 0 0 12 18Z" />
+                                </svg>
+                                <span class="text-base text-white font-bold ">Everything is for free!</span>
+                            </div>
+                        </div>
+                        <div class="relative  group scrolly  ">
+                            <div
+                                class="blur absolute  animation-type-in  text-xl group-hover:opacity-100 transition duration-1000 group-hover:duration-200  -inset-0.5 opacity-75 bg-gradient-to-r from-[#8400ff] via-[#ff0000] to-[#0026ff] rounded-2xl">
+                            </div>
+                            <div id="safetyContainer"
+                                class="md:w-52 relative group-hover:animate-gradient bg-black text-white  transition-all duration-300 ease-in-out rounded-2xl py-5 flex justify-center items-center flex-col">
+                                <div class="font-extrabold text-lg">Safety measures</div>
+                                <div class="flex flex-1 flex-col my-5 md:my-0 text-xs">
+                                    <span class="mt-[10%]   flex  items-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                            stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                        </svg>
+                                        We don't save your password</span>
+                                    <span class="mt-[10%] flex items-center ">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                            stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                        </svg>
+                                        Copyright free voices</span>
+                                    <span class="mt-[10%] flex  items-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                            stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                        </svg>
+                                        Copyright free videos</span>
+                                    <span class="mt-[10%] flex  items-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                            stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                        </svg>
+                                        Tested on multiple accounts</span>
+                                </div>
+                                <button
+                                    class=" bg-gradient-to-r from-[#0111FF] via-[#800Bff] to-[#FF010B] rounded-full py-2 w-[80%] text-xs font-semibold hover:opacity-80 ease-in-out transition-all duration-300">Read
+                                    Terms of services</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section> -->
+
+    </section>
+
+    <div class="bg-black">
+        <!-- <section class="text-gray-600 body-font bg-black">
+            <div class="container px-5 pt-32 mx-auto">
+                <h1
+                    class="md:text-4xl text-lg font-semibold title-font text-white mb-12 text-center flex justify-center items-center scrolly ">
+                    <span class=" rounded-full py-3  px-4">Users who are getting the <span
+                            class="text-transparent gradient-text animate-gradient">benefits <br>from our Service</span>
+                    </span>
+                </h1>
+                <div class="flex justify-center -m-4 scrolly ">
+                    <div class="p-4 md:w-2/3 w-full">
+                        <div class="h-full bg-gray-100 p-8 rounded-3xl">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+                                class="block w-10 h-10 text-gray-400 mb-4" viewBox="0 0 975.036 975.036">
+                                <path
+                                    d="M925.036 57.197h-304c-27.6 0-50 22.4-50 50v304c0 27.601 22.4 50 50 50h145.5c-1.9 79.601-20.4 143.3-55.4 191.2-27.6 37.8-69.399 69.1-125.3 93.8-25.7 11.3-36.8 41.7-24.8 67.101l36 76c11.6 24.399 40.3 35.1 65.1 24.399 66.2-28.6 122.101-64.8 167.7-108.8 55.601-53.7 93.7-114.3 114.3-181.9 20.601-67.6 30.9-159.8 30.9-276.8v-239c0-27.599-22.401-50-50-50zM106.036 913.497c65.4-28.5 121-64.699 166.9-108.6 56.1-53.7 94.4-114.1 115-181.2 20.6-67.1 30.899-159.6 30.899-277.5v-239c0-27.6-22.399-50-50-50h-304c-27.6 0-50 22.4-50 50v304c0 27.601 22.4 50 50 50h145.5c-1.9 79.601-20.4 143.3-55.4 191.2-27.6 37.8-69.4 69.1-125.3 93.8-25.7 11.3-36.8 41.7-24.8 67.101l35.9 75.8c11.601 24.399 40.501 35.2 65.301 24.399z">
+                                </path>
+                            </svg>
+                            <p class="leading-relaxed mb-6 px-5 font-semibold text-sm md:text-2xl">"I've been searching
+                                for
+                                a decent
+                                automation
+                                tool to help me grow my
+                                Instagram account for a while, but they're all too expensive or not good enough. Then I
+                                came
+                                across the
+                                instaminer tool, which completely changed my life. <span
+                                    class="text-transparent gradient-text animate-gradient">The website is incredibly
+                                    easy
+                                    to use and
+                                    convenient</span>;
+                                all you have to do is give it an idea, and boom—a reel is generated. It truly deserves
+                                more
+                                exposure."</p>
+                            <a class="inline-flex items-center">
+                                <img alt="testimonial" src="static\images\user.jpg"
+                                    class="w-12 h-12 rounded-full flex-shrink-0 object-cover object-center">
+                                <span class="flex-grow flex flex-col pl-4">
+                                    <span class="title-font font-bold text-gray-900">Umar Akhtar</span>
+                                    <span class="text-gray-500 text-sm">CONTENT CREATOR</span>
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section> -->
+
+        <footer class="md:px-60 px-10 flex flex-col md:flex-row justify-between h-[50%] bg-black pt-[20vh]">
+            <div class="">
+                <a class="flex cursor-pointer mb-10 " href="">
+                    <img src="static\images\Official Logo Clip Swap.png" alt=""
+                        class="w-[30vh] text-white bg-transparent rounded-full">
+                </a>
+                <span class="text-lg font-bold text-gray-500">Copyright @ ClipSwap 2024</span>
+            </div>
+            <div class="flex flex-col md:flex-row justify-between w-[40%] mb-[14%]">
+                <div class="flex flex-col mt-10 md:mt-0">
+                    <span class="text-2xl text-white font-semibold">Contact us</span>
+                    <span class="text-gray-300 mt-[10%] text-lg font-semibold cursor-pointer"><a
+                            href="t.me/instaminer69">Telegram</a></span>
+                    <span class="text-gray-300 mt-[10%] text-lg font-semibold cursor-pointer"><a
+                            href="https://discord.com/invite/dfNbBhBcq3">Discord</a></span>
+                    <span class="text-gray-300 mt-[10%] text-lg font-semibold cursor-pointer"><a
+                            href="https://www.instagram.com/instaminer.ai?igsh=anBkdDB0bHpvajNn">Instagram</a></span>
+                    <span class="text-gray-300 mt-[10%] text-lg font-semibold cursor-pointer"><a
+                            href="mailto:instaminerai@outlook.com?subject=Website%20Contact">Email</a></span>
+                </div>
+                <div class="flex flex-col mt-10 md:mt-0">
+                    <span class="text-2xl text-white font-semibold">Company</span>
+                    <span class="text-gray-300 mt-[10%] text-lg font-semibold cursor-pointer"><a
+                            href="/terms">Terms</a></span>
+                    <span class="text-gray-300 mt-[10%] text-lg font-semibold cursor-pointer"><a
+                            href="/privacy">Privacy</a></span>
+                </div>
+            </div>
+
+        </footer>
+
+        <button class="chatbot-toggler">
+            <span class="material-symbols-rounded">mode_comment</span>
+            <span class="material-symbols-outlined">close</span>
+        </button>
+
+        <div class="chatbot">
+            <header>
+                <h2>Carl</h2>
+                <span class="close-btn material-symbols-outlined">close</span>
+            </header>
+            <ul class="chatbox">
+                <li class="chat incoming">
+                    <span class="material-symbols-outlined">smart_toy</span>
+                    <p>Hi there 👋<br>How can I help you today?</p>
+                </li>
+            </ul>
+            <div class="chat-input">
+                <textarea placeholder="Enter a message..." name="msg" spellcheck="false" required></textarea>
+                <span id="send-btn" class="material-symbols-rounded">send</span>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
+
+<script src="{{ url_for('static', filename='/scripts/home.js') }}"></script>
